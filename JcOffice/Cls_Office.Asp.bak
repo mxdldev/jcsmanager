@@ -1,0 +1,152 @@
+<%
+'**************************************************************
+'-- File Name: Cls_Manger.Asp 报社用户操作类
+'-- Version: 1.0 Beta build 20090327
+'-- Date: 2009-3-27
+'-- Script Written By Jiangtao
+'**************************************************************
+Class Cls_Office
+Public Tb_classID,Tb_ClassName,Tb_Number,Tb_code,Editor,Tb_Dir,TbOfficeID,Tb_Date   '报刊属性
+Public Tb_OfficeName,Proprieter,Editor_in_chief,Tb_Telephone,Manager,AddDate,Tb_Address        '报社属性
+'---------------------检查报社用户权限
+Public  Function  Officeckeck()
+If Jcs.UserClassID <> 3 Then 
+Response.Write("<br><center><img src=""../skin/images/note.gif"" align=""absmiddle"">&nbsp;<font color=""#FF0000"">你不具备此权限，请与管理员联系！</font></center>")
+Response.end
+End If
+End Function 
+
+' *************************************
+' 查询报社名称
+' @param officeid 报刊ID
+' 2009-3-23 By Sunfeng
+' *************************************
+Function FindOffice(ByVal officeid)
+	'Dim officeid
+	Dim SqlOffice,RsOffice,Tb_OfficeName
+	If officeid <> "" Then
+		SqlOffice = "Select Tb_OfficeName From Tb_Office Where Tb_OfficeID=" & Officeid
+		Set RsOffice = Jcs.Execute(SqlOffice)
+		Tb_OfficeName = RsOffice("Tb_OfficeName")
+		RsOffice.Close:Set RsOffice = Nothing
+	End If
+	FindOffice = Tb_OfficeName
+End Function 
+' *************************************
+' 获取报刊属性
+' @param id 报刊编号
+' 2009-4-7 By jiangtao
+' *************************************
+Function GetTbClass(ByVal id)
+Dim Usr
+If ID = "" Or IsNull(ID) Then
+    Founderr = True
+	Msg = "参数丢失！"
+	Jcs.BackInfo "",0
+	Exit Function 
+End If
+
+If Not Founderr Then
+	SQL = "Select Tb_classID,Tb_ClassName,Tb_Number,Tb_code,Editor,Tb_Date,Tb_OfficeID From [Tb_Class] Where Tb_classID = "&ID
+	Set Rs = Jcs.Execute(SQL)
+	If   Rs.Bof Or Rs.Eof Then
+	Founderr = True
+   Msg = "报刊信息不存在或已经被删除！"
+		Jcs.BackInfo "",0
+    Else 
+    Usr = Rs.GetRows()
+    Tb_ClassName = Usr(1,0)
+    Tb_Number =  Usr(2,0)
+    Tb_code =  Usr(3,0)
+    Editor = Usr(4,0)
+    Tb_Date =  Usr(5,0)
+    TbOfficeID =  Usr(6,0)
+  
+	Rs.Close:Set Rs = Nothing     '释放Rs
+	Usr = Null 
+	End If
+	'Closedatabase()   '关闭数据库链接
+End If 
+End Function 
+Rem ----------------------------------------获取报社信息
+Public Function GetOffice(ByVal ID)
+Dim Usr
+If ID = "" Or IsNull(ID) Then
+    Founderr = True
+	Msg = "参数丢失！"
+	Jcs.BackInfo "",0
+	Exit Function 
+End If
+
+If Not Founderr Then
+	SQL = "Select Tb_OfficeID,Tb_OfficeName,Editor_in_chief,Proprieter,Tb_Telephone,Manager,AddDate,Tb_Address From [Tb_Office] Where Tb_OfficeID = "&ID
+	Set Rs = Jcs.Execute(SQL)
+	If   Rs.Bof Or Rs.Eof Then
+	Founderr = True
+   Msg = "报社信息不存在或已经被删除！"
+		Jcs.BackInfo "",0
+    Else 
+    Usr = Rs.GetRows()
+    Tb_OfficeName = Usr(1,0)
+    Proprieter =  Usr(3,0)
+    Editor_in_chief =  Usr(2,0)
+    Tb_Telephone = Usr(4,0)
+	Manager =  Usr(5,0)
+    AddDate = Usr(6,0)
+	Tb_Address = Usr(7,0)
+	
+	Rs.Close:Set Rs = Nothing     '释放Rs	
+	Usr = Null 
+	End If
+	'Closedatabase()   '关闭数据库链接
+End If 
+End Function 
+'----------------通过userid获取报社名
+Public  Function GetOfficename(userid)
+Dim Rs
+If IsNull(userid) Then 
+GetOfficename = ""
+Exit Function 
+End If 
+SQL = "SELECT UofficeName FROM v_JcUser WHERE (UserID = "&userid&")"
+Set Rs = Jcs.Execute(SQL)
+If Not rs.eof Then GetOfficename = Rs(0)
+Rs.Close:Set Rs = Nothing     '释放Rs
+End Function 
+'----------------通过userid获取报社id
+Public  Function GetOfficeid(userid)
+Dim Rs
+If IsNull(userid) Then 
+GetOfficeid = ""
+Exit Function 
+End If 
+SQL = "SELECT Tb_OfficeId FROM Jc_User WHERE (UserID = "&userid&")"
+Set Rs = Jcs.Execute(SQL)
+If Not rs.eof Then GetOfficeid = Rs(0)
+Rs.Close:Set Rs = Nothing     '释放Rs
+End Function 
+'---------------------获取报社详细信息
+
+
+Rem ----------------------------清空报刊所有变量信息
+Public Function ClearTbcalss()
+   Tb_ClassName = Null 
+   Tb_Number = Null
+   Tb_code = Null 
+   Editor = Null 
+   Tb_Date = Null 
+   TbOfficeID =Null 
+End Function 
+Rem ----------------------------清空报社所有变量信息
+Public Function ClearOffice()
+   Tb_OfficeName = Null 
+   Proprieter = Null
+   Editor_in_chief = Null 
+   Tb_Telephone = Null 
+   Manager = Null 
+   AddDate =Null 
+End Function 
+' *************************************
+
+End Class 
+%>

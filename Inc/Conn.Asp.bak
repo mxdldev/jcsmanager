@@ -1,0 +1,36 @@
+<%@ Language = Vbscript Codepage = 936%>
+<%
+Option Explicit
+Response.Buffer = True
+%>
+<!-- #include File="Config.Asp" -->
+<%
+Session.Timeout = 1
+Response.Cookies(CookiesName&"JcsUser").Expires = DateAdd("h", 2, Now()) 
+Response.Cookies(CookiesName&"JcsUser").Domain = JcsDomain
+Dim SQL,Rs,Conn,Msg,Founderr,Jcs    
+Founderr = False
+Set Jcs = New Cls_Public   '实例化Cls_Public类
+Rem =======================================================================连接数据库
+Sub Connectiondatabase()
+	Dim ConnStr
+	ConnStr = "Provider = Sqloledb; User ID = " & SqlUsername & "; Password = " & SqlPassword & "; Initial Catalog = " & SqlDatabaseName & "; Data Source = " & SqlLocalName & ";"
+	On Error Resume Next
+	Set Conn = Server.CreateObject("ADODB.Connection")
+	Conn.Open Connstr
+	If Err Then
+		Err.Clear
+		Set Conn = Nothing
+		Response.Write "Error,Can't Connection Database Source"
+		Response.End
+	End If
+End Sub
+Rem =======================================================================关闭数据库
+Sub Closedatabase()
+On Error Resume Next
+    If IsObject(Conn) Then
+        Conn.Close
+        Set Conn = Nothing
+    End If
+End Sub 
+%>

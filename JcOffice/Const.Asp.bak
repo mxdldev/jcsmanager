@@ -1,0 +1,10 @@
+<!-- #include file="../Inc/Const.Asp" -->
+<!-- #include file="Cls_Office.Asp" -->
+<!-- #include file="../JcManger/Cls_Manger.Asp" -->
+<%
+'ÅÐ¶ÏµÇÂ½
+Jcs.CheckManger()
+Dim Jcs_Office,Jcs_Manger
+Set  Jcs_Office = new Cls_Office
+Set  Jcs_Manger = new Cls_Manger
+%>
